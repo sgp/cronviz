@@ -84,6 +84,15 @@ describe Cronviz::Crontab do
     crontab = init_crontab :input => "17 */3 11 10 sat do_some_stuff"
     crontab.jobs.empty?.should be_true
   end
+  it "should not truncate the command" do
+    crontab = init_crontab :input => "17 */3 11 10 6 do_some_stuff"
+    crontab.jobs[0].command.should eq("do_some_stuff")
+  end
+
+  it "should not remove spaces in commands" do
+    crontab = init_crontab :input => "17 */3 11 10 6 things and other things"
+    crontab.jobs[0].command.should eq("things and other things")
+  end
 end
 
 

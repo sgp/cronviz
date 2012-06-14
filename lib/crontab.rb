@@ -68,7 +68,7 @@ module Cronviz
       # Given the input (open file or string), yield only lines that
       # look like cronjobs.
       @input.each_line do |x|
-        yield x.chop if x.strip.match /^[\*0-9]/
+        yield x.chomp if x.strip.match /^[\*0-9]/
       end
     end
 
@@ -77,7 +77,7 @@ module Cronviz
       elements = {}
 
       # minute hour day month dayofweek command
-      mi, ho, da, mo, dw, *co = line.split
+      mi, ho, da, mo, dw, co = line.split(' ', 6)
       {:mi => mi, :ho => ho, :da => da, :mo => mo, :dw => dw}.each_pair do |k, v|
         elements[k] = CronParser.expand(k, v)
       end
