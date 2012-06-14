@@ -68,13 +68,25 @@ module Cronviz
       # Given the input (open file or string), yield only lines that
       # look like cronjobs.
       @input.each_line do |x|
-        yield x.chomp if x.strip.match /^[\*0-9]/
+        yield x.chomp if x.strip.match /^[\*0-9@]/
       end
     end
 
     # Turn a cronjob line into a command and list of occurring times.
     def line_to_jobs line
       elements = {}
+
+      # Handle @shorthand (e.g. @daily, @monthly, etc.)
+      if line.start_with?("@")
+        line.sub!(/^@yearly/,   "0 0 1 1 *")
+        line.sub!(/^@annually/, "0 0 1 1 *")
+        line.sub!(/^@monthly/,  "0 0 1 * *")
+        line.sub!(/^@weekly/,   "0 0 * * 0")
+        line.sub!(/^@daily/,    "0 0 * * *")
+        line.sub!(/^@midnight/, "0 0 * * *")
+        line.sub!(/^@hourly/,   "0 * * * *")
+        raise "Invalid @keyword for cron interval found" if line.start_with?("@")
+      end
 
       # minute hour day month dayofweek command
       mi, ho, da, mo, dw, co = line.split(' ', 6)

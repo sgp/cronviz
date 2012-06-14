@@ -6,14 +6,14 @@ module Cronviz
     # N-N    Range inclusive
     # *      All
     # */N    Every N
-
-    # Syntax TODO
     # jan-dec
     # sun-sat
-    # @yearly @monthly @weekly @daily @hourly
+    # @yearly @monthly @weekly @daily @hourly @midnight @annually
 
     # Syntax WONTDO
     # ? L W #
+    # X-Y,A-B,... (Vixie Cron extension for multiple intervals)
+    # X-Y/N       (Vixie Cron extension for every N intervals in the range)
 
     # Syntax CANTDO
     # @reboot
@@ -24,6 +24,34 @@ module Cronviz
 
     # Expand cron syntax to the corresponding integers, return as iterable.
     def self.expand field, interval
+      if interval[/[a-zA-z]{3}/]
+        interval.downcase!
+        if field == :mo
+          interval.sub!(/jan/,"1")
+          interval.sub!(/feb/,"2")
+          interval.sub!(/mar/,"3")
+          interval.sub!(/apr/,"4")
+          interval.sub!(/may/,"5")
+          interval.sub!(/jun/,"6")
+          interval.sub!(/jul/,"7")
+          interval.sub!(/aug/,"8")
+          interval.sub!(/sep/,"9")
+          interval.sub!(/oct/,"10")
+          interval.sub!(/nov/,"11")
+          interval.sub!(/dec/,"12")
+        elsif field == :dw
+          interval.sub!(/sun/,"0")
+          interval.sub!(/mon/,"1")
+          interval.sub!(/tue/,"2")
+          interval.sub!(/wed/,"3")
+          interval.sub!(/thu/,"4")
+          interval.sub!(/fri/,"5")
+          interval.sub!(/sat/,"6")
+        else
+          raise "Alphanumerics found in field that doesn't support them"
+        end
+      end
+
       case
       when interval == interval[/\d+/] # Passed "N" form? We're done.
         [interval.to_i] 
