@@ -79,7 +79,7 @@ def main
 
   begin
     crontab = Cronviz::Crontab.new(
-      :input => options.input_file,
+      :input_file => options.input_file,
       :earliest_time => earliest_time,
       :latest_time => latest_time,
       :event_data => EVENT_DATA)
