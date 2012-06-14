@@ -80,6 +80,10 @@ describe Cronviz::Crontab do
                            :input         => "*/5 * * * * run_every_five_minutes")
     crontab.jobs[0].events.count.should == 1
   end
+  it "should skip jobs that are broken" do
+    crontab = init_crontab :input => "17 */3 11 10 sat do_some_stuff"
+    crontab.jobs.empty?.should be_true
+  end
 end
 
 

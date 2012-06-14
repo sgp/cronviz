@@ -20,7 +20,13 @@ module Cronviz
       end
 
       @jobs = []
-      get_lines { |line| @jobs << line_to_jobs(line) }
+      get_lines do |line|
+        begin
+          @jobs << line_to_jobs(line)
+        rescue
+          puts "WARNING: Failed to parse line #{line}, ignoring"
+        end
+      end
     end
 
     # Find out how many minutes there are between the two times user specified

@@ -32,8 +32,10 @@ module Cronviz
       when interval[/-/] # 1-5
         start, stop = interval.split("-").map(&:to_i)
         start.step(stop).to_a
-      else # "*" or "*/17"
+      when interval[/\*/] # "*" or "*/17"
         expand_recurring field, interval
+      else
+        raise "Cannot expand field #{field}"
       end
     end
 
